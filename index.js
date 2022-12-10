@@ -12,8 +12,8 @@ const app=express();
 const __dirname = path.dirname(__filename);
 
 //Middlewares
-// app.use('/dist', express.static(path.join(__dirname, "dist")));
-app.use(express.static(__dirname));
+app.use('/dist', express.static(path.join(__dirname, "dist")));
+
 
 //geting the api keys from env
 const API_CALLS=[process.env.API_KEY1,process.env.API_KEY2];
@@ -38,8 +38,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 const noDesciption="Description Not available..."
 let search_query="";
-
-
 //mongoose connection
 mongoose.connect("mongodb+srv://medbikri:Password12346789@cluster0.12qrfbl.mongodb.net/medbikri",{useNewUrlParser:true, useUnifiedTopology:true});
 mongoose.connection.on("connected",()=>{
@@ -102,8 +100,7 @@ const getData=async function ()
 //Implementation of Node-Cron ***** , secs,min,hr,day,week,month
 cron.schedule('0,10 * * * *', () => {
     // Do your work here
-    // getData();
-    console.log("testingg")
+    getData();
   });
 app.get('/api/all', (req, res) => {
     const page = req.query.page || 1;
@@ -134,6 +131,11 @@ app.get('/',(req,res)=>{
 //searching from the input user query
 app.get('/api/search',(req,res)=>{
 search_query=req.query.search;
+if(search_query.length===0)
+{
+    res.redirect('/api/all')
+}
+else{
 VideoData.find({
     'videoTitle': { $regex: search_query, $options: 'i' }},(err,data)=>{
     if(err)
@@ -144,6 +146,7 @@ VideoData.find({
         res.send(data);
     }
 })
+}
 })
 
 
