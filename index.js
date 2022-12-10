@@ -12,8 +12,7 @@ const app=express();
 const __dirname = path.dirname(__filename);
 
 //Middlewares
-app.use('/dist', express.static(path.join(__dirname, "dist")));
-
+app.use(express.static('/dist'))
 //geting the api keys from env
 const API_CALLS=[process.env.API_KEY1,process.env.API_KEY2];
 
