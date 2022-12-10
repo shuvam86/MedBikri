@@ -43,5 +43,5 @@ For visualization through a dashboard one may directly run the app locally and t
 ![HomeScreen without Data Query](screenshots/NoQueryToAllData.png)
 
 
-### Also can query using "page" query since the data is sorted in reverse chronological order it skeps   ### the first some data to get to page number for example 2...
+### Also can query using "page" query since the data is sorted in reverse chronological order it skeps   the first some data to get to page number for example 2...
 ![HomeScreen without Data Query](screenshots/QueryInPagestoo.png)
