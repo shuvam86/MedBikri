@@ -12,7 +12,8 @@ const app=express();
 const __dirname = path.dirname(__filename);
 
 //Middlewares
-app.use('/dist', express.static(path.join(__dirname, "dist")));
+// app.use('/dist', express.static(path.join(__dirname, "dist")));
+app.use(express.static(__dirname));
 
 //geting the api keys from env
 const API_CALLS=[process.env.API_KEY1,process.env.API_KEY2];
@@ -101,6 +102,8 @@ const getData=async function ()
 //Implementation of Node-Cron ***** , secs,min,hr,day,week,month
 cron.schedule('0,10 * * * *', () => {
     // Do your work here
+    // getData();
+    console.log("testingg")
   });
 app.get('/api/all', (req, res) => {
     const page = req.query.page || 1;
