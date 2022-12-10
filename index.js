@@ -9,9 +9,16 @@ const __filename = fileURLToPath(import.meta.url);
 import * as dotenv from 'dotenv';
 dotenv.config();
 const app=express();
+const __dirname = path.dirname(__filename);
 
+//Middlewares
+app.use('/dist', express.static(path.join(__dirname, "dist")));
+
+//geting the api keys from env
 const API_CALLS=[process.env.API_KEY1,process.env.API_KEY2];
-console.log("rdtfyghijv",API_CALLS.length);
+
+
+//Schema of the data object
 var videoSchema = new mongoose.Schema({
     videoTitle   : String,
     videoChannelTitle:String,
@@ -20,15 +27,18 @@ var videoSchema = new mongoose.Schema({
     videoThumbNail:String
 });
 
+
+//Data description
 // index > snippet > description , publishinDate, title , thumbnails.high.url , channelTitle
 
 var  VideoData= mongoose.model("medbikri", videoSchema);
-const __dirname = path.dirname(__filename);
+
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 const noDesciption="Description Not available..."
 let search_query="";
-// let API_URL=`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&order=date&q=${search_query}&key=`;
+
+
 
 //mongoose connection
 mongoose.connect("mongodb+srv://medbikri:Password12346789@cluster0.12qrfbl.mongodb.net/medbikri",{useNewUrlParser:true, useUnifiedTopology:true});
@@ -45,8 +55,10 @@ let objVideoData= new VideoData({
 })
 
 
-//Implementation of Node-Cron ***** , secs,min,hr,day,week,month
 
+
+//getting data and using only the valid api calls
+//if one fails it "trys for another one"
 const getData=async function ()
 {
     let valid=false;
@@ -55,7 +67,6 @@ const getData=async function ()
     let API_URL="";
     try
     {
-        // console.log(API_KEY);
         if(search_query.length==0){
           API_URL=`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&order=date&key=${API_KEY}`;
         }
@@ -76,7 +87,6 @@ const getData=async function ()
             })
             objVideoData.save();
             valid=true;
-            // objToBeSavedInDb=Object.assign(objVideoData);
         })
     }catch(e){
         console.log("Failed - ", e);
@@ -84,15 +94,18 @@ const getData=async function ()
     if(valid) break;
    }
 }
+
+
+
 //cronjob sceduling the job for every 10 minute 
+
+//Implementation of Node-Cron ***** , secs,min,hr,day,week,month
 cron.schedule("* * * * * *", ()=> {
-    // console.log("testingggg");
-    // getData();
+    getData();
 });
 app.get('/api/all', (req, res) => {
     const page = req.query.page || 1;
     const pageSize = req.query.pageSize || 10;
-  
     // Calculate the number of documents to skip
     const skip = (page - 1) * pageSize;
   
@@ -110,14 +123,27 @@ app.get('/api/all', (req, res) => {
   });
 
 app.get('/',(req,res)=>{
+   
     res.sendFile(path.join(__dirname,'/static/index.html'));
 })
 
-app.post('/',(req,res)=>{
-res.send("hello there server is working");
-search_query=req.body.search;
- getData();
+
+
+//searching from the input user query
+app.get('/api/search',(req,res)=>{
+search_query=req.query.search;
+VideoData.find({
+    'videoTitle': { $regex: search_query, $options: 'i' }},(err,data)=>{
+    if(err)
+    {
+        res.send(err)
+    }
+    else{
+        res.send(data);
+    }
 })
+})
+
 
 
 //Running port at 3000
