@@ -101,7 +101,7 @@ const getData=async function ()
 
 //Implementation of Node-Cron ***** , secs,min,hr,day,week,month
 cron.schedule("* /10 * * * *", ()=> {
-    getData();
+    // getData();
 });
 app.get('/api/all', (req, res) => {
     const page = req.query.page || 1;
