@@ -100,9 +100,9 @@ const getData=async function ()
 //cronjob sceduling the job for every 10 minute 
 
 //Implementation of Node-Cron ***** , secs,min,hr,day,week,month
-cron.schedule("*/10 * * * *", ()=> {
-    // getData();
-});
+cron.schedule('0,10 * * * *', () => {
+    // Do your work here
+  });
 app.get('/api/all', (req, res) => {
     const page = req.query.page || 1;
     const pageSize = req.query.pageSize || 10;
@@ -123,7 +123,7 @@ app.get('/api/all', (req, res) => {
   });
 
 app.get('/',(req,res)=>{
-   
+
     res.sendFile(path.join(__dirname,'/static/index.html'));
 })
 
