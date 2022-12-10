@@ -12,7 +12,8 @@ const app=express();
 const __dirname = path.dirname(__filename);
 
 //Middlewares
-app.use(express.static('/dist'))
+app.use('/dist', express.static(path.join(__dirname, "dist")));
+
 //geting the api keys from env
 const API_CALLS=[process.env.API_KEY1,process.env.API_KEY2];
 
@@ -36,7 +37,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 const noDesciption="Description Not available..."
 let search_query="";
-
 
 
 //mongoose connection
